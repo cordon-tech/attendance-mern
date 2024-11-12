@@ -1,0 +1,167 @@
+.dashboard-container {
+  margin: 20px;
+}
+
+.dashboard-content {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+/* Dashboard card styling with the new background color */
+.dashboard-card {
+  position: relative;
+  width: 250px;
+  height: 300px;
+  background-color: #f7f6f2 !important; /* Set the background color to #f7f6f2 */ 
+  /* border: 2px solid #800040; */
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transform: skew(-10deg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.dashboard-card:hover {
+  background-color: #c9645d !important; /* Hover background color */
+  border-color: #4d004d; /* Optional: change border color on hover */
+}
+
+.dashboard-card .icon {
+  background: #fff;
+  padding: 10px;
+  border-radius: 10px;
+  transform: skew(10deg);
+  margin-bottom: 10px;
+}
+
+.dashboard-card h3 {
+  transform: skew(10deg);
+  font-size: 20px;
+  margin: 10px 0;
+  color: #4d004d;
+}
+
+.dashboard-card p {
+  transform: skew(10deg);
+  font-size: 36px;
+  font-weight: bold;
+  color: #4d004d;
+  margin: 0;
+}
+
+.details-link {
+  transform: skew(10deg);
+  margin-top: 15px;
+}
+
+.details-link a {
+  text-decoration: none;
+  color: #800040;
+  border: 1px solid #800040;
+  border-radius: 20px;
+  padding: 8px 20px;
+  font-size: 16px; /* Adjusted font size */
+  font-weight: bold; /* Make text bolder */
+  transition: background 0.3s, color 0.3s;
+  display: inline-block;
+  text-align: center;
+  line-height: 1.2; /* Adjust line height */
+}
+
+.details-link a:hover {
+  background: #800040;
+  color: #fff;
+}
+
+/* Navbar styling */
+.navbar-nav {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+}
+
+.navbar-nav ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-nav ul li {
+  position: relative;
+  margin: 0 15px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 16px;
+  font-weight: normal; /* Make sure the font weight is not too bold */
+}
+
+.navbar-nav ul li .arrow {
+  margin-left: 5px;
+}
+
+/* Dropdown styling */
+.dropdown {
+  position: absolute;
+  top: 100%; /* Aligns dropdown directly below the parent */
+  left: 0;
+  display: none;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  z-index: 1;
+  padding: 5px 0; /* Adds spacing inside the dropdown */
+  min-width: 180px; /* Ensures dropdown has enough width */
+}
+
+.dropdown li {
+  padding: 8px 15px;
+  color: #333;
+  font-size: 14px; /* Adjusts the font size for a refined look */
+  font-weight: normal; /* Sets normal font weight */
+  white-space: nowrap;
+}
+
+.dropdown li:hover {
+  background-color: #f0f0f0; 
+}
+
+.navbar-nav ul li:hover .dropdown {
+  display: block;
+}
+
+.navbar-nav ul li:hover {
+  text-decoration: underline;
+}
+
+/* Logout button styling */
+.logout-button {
+  background-color: #000; /* Black background */
+  color: #fff; /* White text */
+  border: none;
+  padding: 4px 10px; /* Reduced padding for a smaller button */
+  margin-left: 520px;
+  border-radius: 10px; /* Smaller border radius */
+  font-size: 12px; /* Smaller font size */
+  cursor: pointer;
+  position: relative;
+  right: 20px; /* Positioned in the corner */
+  top: 50%;
+  transform: translateY(-50%); /* Centers vertically */
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.logout-button:hover {
+  background-color: #333; /* Darker shade on hover */
+  transform: scale(1.05); /* Slight zoom effect */
+}
+
+
+

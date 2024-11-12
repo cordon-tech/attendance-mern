@@ -1,0 +1,169 @@
+/* Navbar styles */
+.navbar {
+    background-color: #540e44; /* Deep purple background */
+    padding: 40px 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+  }
+  
+  #Header {
+    text-align: center;
+    font-weight: bold;
+    border: none; /* Ensure no border */
+    background-color: white; /* Make background transparent */
+    color: black; /* Set text color to black or any other visible color */
+  }
+  
+  /* Button styles */
+  .btn-custom {
+    background-color: white;
+    color: white;
+    border: none;
+  }
+  
+  .btn-custom:hover {
+    background-color: #0056b3;
+  }
+  .btn-secondary{
+    background-color: grey;
+    color: white;
+    margin-top: 1%;
+  }
+  
+  /* Submit Button */
+  #submitButton {
+    padding: 5px;
+    background-color: #5D0E41;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    width: 100%;
+  }
+  
+  .logo {
+    height: 80px;
+  }
+  
+  .header p {
+    display: flex;
+    float: inline-end;
+  }
+  
+  /* Container Styles */
+  .container {
+    background: #F0EEED;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    max-width: 1000px; /* Set maximum width */
+    margin: 20px auto; /* Center the container */
+    padding: 20px; /* Add padding inside the container */
+
+  }
+  
+  /* Form Styles */
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  input[type="text"],
+  input[type="date"],
+  input[type="file"] {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* Flexbox for fields in the same row */
+  .form-row {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .form-row .form-group {
+    flex: 1;
+    margin-right: 10px;
+  }
+  
+  .form-row .form-group:last-child {
+    margin-right: 0;
+  }
+  
+  /* Styling for buttons */
+  button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  
+  button[type="submit"],
+  button[type="reset"] {
+    background-color: #5D0E41;
+    color: #fff;
+  }
+  
+  /* Header Styles */
+  .header {
+    padding: 15px;
+    color: black;
+    font-weight: bold;
+  }
+  
+  /* Required Field */
+  .required {
+    color: red;
+    font-weight: bold;
+  }
+
+  /* Ensure all input and select elements have the same width */
+.form-control,
+.form-select {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Flexbox for fields in the same row */
+.form-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.form-row .form-group {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.form-row .form-group:last-child {
+    margin-right: 0;
+}
+
+.input-group-text {
+  border: none;
+  background-color: transparent;
+  padding: 0 10px;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+}

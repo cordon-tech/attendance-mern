@@ -1,0 +1,182 @@
+.dashboard-container {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  height: 100vh; /* Make container full height of the viewport */
+  display: flex; /* Use flexbox for centering */
+  flex-direction: column; /* Allow vertical stacking */
+}
+
+/* Navbar styling */
+.navbar {
+  background-color: #4b0039; /* Burgundy color */
+  padding: 10px;
+  position: relative;
+  z-index: 10; /* Ensure the navbar is above other content */
+}
+
+.navbar-nav ul {
+  list-style-type: none;
+  display: flex;
+  justify-content: space-around;
+  padding: 0;
+  margin: 0;
+}
+
+.navbar-nav ul li {
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  position: relative; /* Needed for the dropdown positioning */
+  padding: 10px;
+}
+
+.arrow {
+  margin-left: 5px;
+}
+
+/* Dropdown styling */
+.dropdown {
+  position: absolute; /* Make the dropdown absolutely positioned */
+  background-color: white;
+  color: black;
+  list-style-type: none;
+  padding: 10px;
+  margin-top: 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 100; /* Ensure dropdown is on top of everything */
+  border-radius: 5px;
+  min-width: 200px;
+  display: none;
+  left: 0;
+  top: 100%; /* Position below the nav item */
+  
+  /* Ensure vertical structure for the dropdown */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Align dropdown to start from the left */
+.navbar-nav ul li .dropdown li {
+  color: black;
+  padding: 5px 10px;
+  cursor: pointer;
+  display: block; /* Used block to ensure dropdown items are block elements */
+}
+
+.navbar-nav ul li .dropdown li:hover {
+  background-color: #4b0039;
+  color: white;
+}
+
+li:hover .dropdown,
+li:focus-within .dropdown {
+  display: flex; /* Used flex to ensure vertical layout */
+  flex-direction: column; /* To make dropdowns vertical */
+}
+
+/* Main content styling */
+.dashboard-content {
+  display: flex;
+  justify-content: space-around;
+  align-items: center; /* Center items vertically */
+  padding: 40px;
+  flex-grow: 1; /* Allow this section to grow and take available space */
+  background-color: #f4f4f4;
+}
+
+/* Adjusted dashboard card styling */
+.dashboard-card {
+  background-color: white;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 40px;
+  width: 20%;
+  text-align: center;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  margin: 10px; /* Added margin for spacing between cards */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+  position: relative; /* Added to position the hover box relative to the card */
+}
+
+.dashboard-card .icon {
+  margin-bottom: 30px; /* Increased margin for more spacing */
+}
+
+.dashboard-card img {
+  width: 70px;
+  height: 70px;
+}
+
+/* Title and text styling */
+.dashboard-card h3 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.dashboard-card p {
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+}
+
+.dashboard-card:hover {
+  background-color: #e0e0e0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dashboard-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .dashboard-card {
+    width: 80%; /* Adjust for smaller screens */
+    margin-bottom: 20px;
+  }
+}
+
+.dropdown li a {
+  text-decoration: none; 
+  color: inherit; /* Inherits the color from the parent element */
+  cursor: pointer; /* Shows pointer to indicate it's clickable */
+}
+
+.attendance a {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* Hover box styling */
+.hover-box {
+  position: absolute;
+  bottom: 20px; /* Positioning the box below the card */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #e0e0e0;
+  color: #4b0039;
+  border: 2px solid #4b0039;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 5;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.dashboard-card:hover .hover-box {
+  opacity: 1; /* Show the box on hover */
+}
+
+.hover-box:hover {
+  background-color: #4b0039;
+  color: white;
+}
+
+.hover-box a {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}

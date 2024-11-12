@@ -1,0 +1,151 @@
+
+
+
+h1 {
+    color: #343a40;
+    font-size: 2rem;
+}
+
+.form-label {
+    font-weight: bold;
+    color: #495057;
+}
+
+.form-control,
+.form-select {
+    border-radius: 0.25rem;
+    border: 1px solid #ced4da;
+}
+
+textarea.form-control {
+    resize: none;
+}
+
+button {
+    font-size: 1rem;
+    padding: 0.5rem 2rem;
+    
+}
+
+
+/* .input-group .form-control {
+    margin-right: 10px;
+} */
+
+button {
+    font-size: 1rem;
+    padding: 0.5rem 2rem;
+}
+
+
+/* Ensure the input and button align properly */
+.input-group .form-control {
+    flex: 1;
+    margin-right: 10px;
+}
+
+#searchButton {
+    flex-shrink: 0;
+    padding: 0.5rem 1.5rem;
+    background-color: #5D0E41;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#searchButton:hover {
+    background-color: #3a0d2b;
+}
+
+
+
+
+
+/* Button styling */
+#searchButton,
+#printButton,
+#downloadPDFButton {
+    background-color: #5D0E41;
+    color: white;
+    border: none;
+}
+
+#searchButton:hover,
+#printButton:hover,
+#downloadPDFButton:hover {
+    background-color: #3a0d2b;
+  
+
+}
+.d-flex.justify-content-center {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* If you want vertical centering too */
+}
+
+
+/* Custom button styling */
+.btn-custom {
+    background-color: black;
+    color: white;
+    border: none;
+}
+
+.btn-custom:hover {
+    background-color: #0056b3;
+    /* Darker color on hover */
+}
+
+/* Print Media Styles */
+@media print {
+    .navbar,
+    #printButton,
+    #downloadPDFButton,
+    #searchButton {
+        display: none !important;
+    }
+}
+
+/* .printButton{
+
+}
+.downloadPDFButton{
+
+} */
+ /* Print Styles */
+@media print {
+    /* Hide any elements that should not appear in the PDF */
+    .btn, #searchButton {
+      display: none;
+    }
+  
+    /* Ensure form fields are visible with a border */
+    .form-control, .form-select {
+      border: 1px solid #000;  /* Black border for form fields */
+      background-color: #fff;  /* White background for input fields */
+    }
+  
+    /* Ensure proper margins and padding for form elements */
+    fieldset {
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #000; /* Black border for fieldsets */
+    }
+  
+    /* Customize the table or layout style */
+    .row {
+      display: block;
+      margin-bottom: 10px;
+    }
+  
+    label {
+      font-weight: bold;
+      margin-right: 10px;
+    }
+  
+    /* Add more padding or spacing as needed */
+    .form-group {
+      margin-bottom: 15px;
+    }
+  }
+  

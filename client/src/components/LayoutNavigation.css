@@ -1,0 +1,97 @@
+/* Layout container */
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Navbar styling */
+.navbar {
+  background-color: #4B003B; /* Dark purple background */
+  color: white;
+  padding: 1rem;
+  position: relative; /* Positioning context for dropdowns */
+  z-index: 1;
+}
+
+.navbar-nav ul {
+  list-style-type: none;
+  display: flex;
+  gap: 1.5rem;
+  padding: 0;
+  margin: 0;
+}
+
+.navbar-nav li {
+  position: relative; /* Each li acts as a positioning context for its dropdown */
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.navbar-nav a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Dropdown menu styling */
+.dropdown {
+  display: none;
+  flex-direction: column;
+  background-color: #f7f0f5; /* Same background as navbar */
+  position: absolute;
+  top: 100%; /* Aligns dropdown directly below the navbar item */
+  left: 0;
+  min-width: 150px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  padding: 0.5rem 0;
+  z-index: 1000;
+  border-radius: 5px;
+}
+
+/* Show dropdown on hover or focus */
+.navbar-nav li:hover .dropdown,
+.navbar-nav li:focus-within .dropdown {
+  display: flex;
+}
+
+.dropdown li {
+  padding: 0.5rem 1rem;
+  color: white;
+  font-size: 16px;
+  font-weight: normal;
+  white-space: nowrap; /* Prevents long text from wrapping */
+}
+
+.dropdown li:hover {
+  background-color: #6C0A57; /* Slightly lighter shade for hover effect */
+}
+
+.arrow {
+  font-size: 12px;
+  margin-left: 5px;
+}
+
+.content {
+  flex-grow: 1;
+  padding: 1rem;
+  background-color: #f8f9fa; /* Light gray background for content area */
+}
+
+/* Additional styling for a cleaner look */
+.navbar-nav ul {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.navbar-nav li {
+  padding: 0.5rem;
+  transition: background-color 0.3s ease;
+}
+
+.navbar-nav li:hover {
+  background-color: #6C0A57; /* Hover effect for navbar items */
+  border-radius: 5px;
+}
