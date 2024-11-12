@@ -35,10 +35,10 @@ const contractorSchema = new mongoose.Schema({
   ptrcNo: String,
   buildingName: String,
   password: String,
-}, { _id: false }); // Removing document fields for now
+}, { _id: false });
 
-// Only create Ams model if it doesn't exist already
-const Ams = mongoose.models.Ams || mongoose.model('Ams', new mongoose.Schema({
+// Define the ams schema with contractorMaster as a Map
+const amsSchema = new mongoose.Schema({
   contractorMaster: {
     type: Map,  // Use a Map for contractorMaster
     of: contractorSchema,
@@ -46,6 +46,8 @@ const Ams = mongoose.models.Ams || mongoose.model('Ams', new mongoose.Schema({
 }, {
   collection: 'ams',  // Store data in the 'ams' collection
   timestamps: true  // Optional timestamps
-}));
+});
+
+const Ams = mongoose.models.Ams || mongoose.model('Ams', amsSchema);
 
 module.exports = Ams;

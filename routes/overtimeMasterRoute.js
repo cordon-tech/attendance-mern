@@ -23,7 +23,7 @@ const { getContractors, getContractorDetails, getOvertimeRecords } = require('..
 router.get('/contractors', getContractors);
 
 // Route to fetch details of a specific contractor
-router.get('/contractor/:id', getContractorDetails);
+router.get('/contractor/contractorId', getContractorDetails);
 
 // Route to fetch overtime records by contractorName and overtimeMonth
 router.get('/records', getOvertimeRecords);
