@@ -1,128 +1,161 @@
-
-
-//final testing
-
-
-
 const mongoose = require('mongoose');
-const AMS = mongoose.connection.collection("ams");
+const { initializeApp } = require('firebase/app');
+const { getStorage, ref, uploadString, getDownloadURL } = require('firebase/storage');
+const {storage} = require('../config/firebase');
 
-// Fetch all unique contractor names and addresses from contractorMaster in the ams collection
-exports.getContractorNames = async (req, res) => {
-    try {
-        const amsData = await AMS.findOne({}, { projection: { contractorMaster: 1 } });
-        if (!amsData || !amsData.contractorMaster) {
-            return res.status(404).json({ message: "No contractors found." });
-        }
-        const contractors = Object.values(amsData.contractorMaster);
-        const contractorNames = contractors.map(contractor => contractor.contractorName);
-        res.json(contractorNames);
-    } catch (error) {
-        console.error("Error fetching contractor names:", error);
-        res.status(500).json({ message: "Failed to fetch contractor names", error });
-    }
+const AMS = mongoose.connection.collection('ams');
+
+const isValidDataUrl = (string) => {
+  const regex = /^data:[\w.+-]+\/[\w.+-]+(;[\w.+-]+=[\w.+-]+)*;base64,/;
+  return regex.test(string);
 };
-
-
-
-// Fetch all unique designation names from designation in the ams collection
-exports.getDesignationNames = async (req, res) => {
+// Helper function to upload files to Firebase
+const uploadToFirebase = async (file, path) => {
   try {
-      const amsData = await AMS.findOne({}, { projection: { designation: 1 } });
-      if (!amsData || !amsData.designation) {
-          return res.status(404).json({ message: "No designations found." });
-      }
-      const designations = Object.values(amsData.designation);
-      const designationNames = designations.map(designation => designation.designationName);
-      res.json(designationNames);
+    const storageRef = ref(storage, path);
+    await uploadString(storageRef, file, 'data_url'); // Upload Base64 string
+    return await getDownloadURL(storageRef); // Get the file's download URL
   } catch (error) {
-      console.error("Error fetching designation names:", error);
-      res.status(500).json({ message: "Failed to fetch designation names", error });
+    console.error('Error uploading to Firebase:', error);
+    throw new Error('Failed to upload file to Firebase');
   }
 };
 
-
-// Fetch all unique labour types from labourRate in the ams collection
-exports.getLabourTypes = async (req, res) => {
-    try {
-        // Retrieve `labourType` from each entry in `labourRate`
-        const amsData = await AMS.findOne({}, { projection: { labourRate: 1 } });
-        
-        if (!amsData || !amsData.labourRate) {
-            return res.status(404).json({ message: "No labour types found." });
-        }
-        
-        const labourEntries = Object.values(amsData.labourRate);
-        const labourTypes = labourEntries.map(entry => entry.labourType).filter(Boolean); // Filter out undefined values
-        res.json(labourTypes);
-    } catch (error) {
-        console.error("Error fetching labour types:", error);
-        res.status(500).json({ message: "Failed to fetch labour types", error });
+// Fetch all contractor names
+exports.getContractorNames = async (req, res) => {
+  try {
+    const amsData = await AMS.findOne({}, { projection: { contractorMaster: 1 } });
+    if (!amsData || !amsData.contractorMaster) {
+      return res.status(404).json({ message: 'No contractors found.' });
     }
+    const contractors = Object.values(amsData.contractorMaster);
+    const contractorNames = contractors.map((contractor) => contractor.contractorName);
+    res.json(contractorNames);
+  } catch (error) {
+    console.error('Error fetching contractor names:', error);
+    res.status(500).json({ message: 'Failed to fetch contractor names', error });
+  }
 };
 
+// Fetch all designation names
+exports.getDesignationNames = async (req, res) => {
+  try {
+    const amsData = await AMS.findOne({}, { projection: { designation: 1 } });
+    if (!amsData || !amsData.designation) {
+      return res.status(404).json({ message: 'No designations found.' });
+    }
+    const designations = Object.values(amsData.designation);
+    const designationNames = designations.map((designation) => designation.designationName);
+    res.json(designationNames);
+  } catch (error) {
+    console.error('Error fetching designation names:', error);
+    res.status(500).json({ message: 'Failed to fetch designation names', error });
+  }
+};
 
-// Register a new worker with workerId under workerMaster
+// Fetch all labour types
+exports.getLabourTypes = async (req, res) => {
+  try {
+    const amsData = await AMS.findOne({}, { projection: { labourRate: 1 } });
+    if (!amsData || !amsData.labourRate) {
+      return res.status(404).json({ message: 'No labour types found.' });
+    }
+    const labourEntries = Object.values(amsData.labourRate);
+    const labourTypes = labourEntries.map((entry) => entry.labourType).filter(Boolean);
+    res.json(labourTypes);
+  } catch (error) {
+    console.error('Error fetching labour types:', error);
+    res.status(500).json({ message: 'Failed to fetch labour types', error });
+  }
+};
+
+// Register a new worker
+// Register a new worker
 exports.registerWorker = async (req, res) => {
   try {
     console.log(req.body); // Log the incoming data for debugging
 
     // Fetch the latest worker entry to determine the next workerId
-    const latestWorker = await mongoose.connection.collection('ams').findOne({
-      workerMaster: { $exists: true }
+    const latestWorker = await AMS.findOne({
+      workerMaster: { $exists: true },
     });
 
     let newWorkerId = 40001; // Default starting workerId
     if (latestWorker && latestWorker.workerMaster) {
       const workerIds = Object.keys(latestWorker.workerMaster);
-      const maxWorkerId = Math.max(...workerIds.map(id => parseInt(id)));
+      const maxWorkerId = Math.max(...workerIds.map((id) => parseInt(id)));
       newWorkerId = maxWorkerId + 1; // Increment to get the new ID
     }
 
-    // Prepare worker data, including the generated workerId and new fields
+    // Prepare file upload paths
+    const workerFolderPath = `worker/${newWorkerId}/`;
+
+    // Upload files to Firebase
+    const aadharFrontUrl = req.body.aadharFront
+      ? await uploadToFirebase(req.body.aadharFront, `${workerFolderPath}aadharFront.png`)
+      : '';
+    const aadharBackUrl = req.body.aadharBack
+      ? await uploadToFirebase(req.body.aadharBack, `${workerFolderPath}aadharBack.png`)
+      : '';
+    const bankPhotoUrl = req.body.bankPhoto
+      ? await uploadToFirebase(req.body.bankPhoto, `${workerFolderPath}bankPhoto.png`)
+      : '';
+    const capturedPhotoUrl = req.body.capturedPhoto
+      ? await uploadToFirebase(req.body.capturedPhoto, `${workerFolderPath}capturedPhoto.png`)
+      : '';
+
+    // Prepare worker data
     const newWorkerData = {
-      workerId: newWorkerId, // Store the generated unique workerId here
+      workerId: newWorkerId,
       firstName: req.body.firstName,
       middleName: req.body.middleName,
       lastName: req.body.lastName,
-      dob: req.body.dob,
+      dateOfBirth: req.body.dateOfBirth,
+      dateOfJoining: req.body.dateOfJoining,
       gender: req.body.gender,
-      mobileNo: req.body.mobileNo,
+      phoneNumber: req.body.phoneNumber,
       maritalStatus: req.body.maritalStatus,
       permanentAddress: req.body.permanentAddress,
-      city: req.body.city,
-      district: req.body.district,
-      state: req.body.state,
-      pincode: req.body.pincode,
+      permanentPinCode: req.body.permanentPinCode,
+      permanentCity: req.body.permanentCity,
+      permanentDistrict: req.body.permanentDistrict,
+      permanentState: req.body.permanentState,
       currentAddress: req.body.currentAddress,
       idType: req.body.idType,
-      aadharNo: req.body.aadharNo,
-      documentFiles: req.body.documentFiles || "",  // Assuming document file data comes as a text URL or file name
-      aadharBack: req.body.aadharBack || "",       // Text data for the back of Aadhar card
-      bankPassbook: req.body.bankPassbook || "",   // Text data for bank passbook
-      contractorName: req.body.contractorName,
-      designationName: req.body.designationName,
-      labourType: req.body.labourType,
-      joinDate: req.body.joinDate,
-      issueDate: req.body.issueDate,
-      validDate: req.body.validDate,
-      bocwRegistration: req.body.bocwRegistration,
-      pfNumber: req.body.pfNumber,
-      uanNumber: req.body.uanNumber,
-      esicNumber: req.body.esicNumber,
-      panNumber: req.body.panNumber,
-      ipNumber: req.body.ipNumber,
-      policeVerify: req.body.policeVerify,
+      policeVerification: req.body.policeVerification,
+      aadharNumber: req.body.aadharNumber,
+      aadharFront: aadharFrontUrl,
+      aadharBack: aadharBackUrl,
+      accountNumber: req.body.accountNumber,
       bankName: req.body.bankName,
-      branch: req.body.branch,
-      accountNo: req.body.accountNo,
-      ifscCode: req.body.ifscCode,
-      nominee: req.body.nominee,
-      relation: req.body.relation,
-      nomineeNo: req.body.nomineeNo,
-      children: req.body.children,
-      qualification: req.body.qualification,
-      sector: req.body.sector,
+      bankPhoto: bankPhotoUrl,
+      bocwReg: req.body.bocwReg,
+      pfNumber: req.body.pfNumber,
+      branchName: req.body.branchName,
+      capturedPhoto: capturedPhotoUrl,
+      qrCode: {
+        buildingNumber: req.body.permanentAddress || 'N/A',
+        contractorName: req.body.contractorName || 'N/A',
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        workerId: newWorkerId,
+      },
+      children: req.body.children || '',
+      contractorName: req.body.contractorName,
+      designation: req.body.designation,
+      esicNumber: req.body.esicNumber || '',
+      labourType: req.body.labourType,
+      panNumber: req.body.panNumber || '',
+      ipNumber: req.body.ipNumber || '',
+      issueDate: req.body.issueDate || '',
+      ifscCode: req.body.ifscCode || '',
+      nominee: req.body.nominee || '',
+      nomineeContactNumber: req.body.nomineeContactNumber || '',
+      qualification: req.body.qualification || '',
+      relation: req.body.relation || '',
+      sector: req.body.sector || '',
+      uanNumber: req.body.uanNumber || '',
+      validDate: req.body.validDate || '',
     };
 
     // Store the new worker data in workerMaster
@@ -132,10 +165,32 @@ exports.registerWorker = async (req, res) => {
       { upsert: true }
     );
 
-    res.status(201).json({ message: 'Worker registered successfully', workerId: newWorkerId });
+    // Now create a corresponding entry in the qrCodeMaster
+    const qrCodeData = {
+      buildingNumber: req.body.permanentAddress || 'N/A', // Permanent Address stored under buildingNumber
+      contractorName: req.body.contractorName || 'N/A',
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      qrCode: {
+        buildingNumber: req.body.permanentAddress || 'N/A', // Permanent Address stored under buildingNumber
+        contractorName: req.body.contractorName || 'N/A',
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        workerId: newWorkerId,
+      },
+      workerId: newWorkerId,
+    };
+
+    // Insert or update qrCodeMaster with the worker's QR code data
+    await mongoose.connection.collection('ams').updateOne(
+      {},
+      { $set: { [`qrCodeMaster.${newWorkerId}`]: qrCodeData } },
+      { upsert: true }
+    );
+
+    res.status(201).json({ message: 'Worker registered successfully and qrCodeMaster updated', workerId: newWorkerId });
   } catch (error) {
     console.error('Error registering worker:', error); // Log the error for debugging
     res.status(500).json({ message: 'Failed to register worker', error: error.message });
   }
 };
-

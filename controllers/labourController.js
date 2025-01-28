@@ -1,130 +1,314 @@
-// controllers/labourController.js
 
-const Ams = require('../models/labourModel');
+// const mongoose = require('mongoose');
 
-// Get all labour rates
-exports.getLabours = async (req, res) => {
+// const AMS_ID = new mongoose.Types.ObjectId(process.env._id);
+
+// exports.getLabourRates = async (req, res) => {
+//   try {
+//     const amsCollection = mongoose.connection.collection('ams'); // Access `ams` collection
+//     const mainDocument = await amsCollection.findOne({ _id: AMS_ID });
+
+//     if (!mainDocument || !mainDocument.labourRate) {
+//       return res.status(404).json({ success: false, message: "Labour rates not found" });
+//     }
+
+//     const labourRates = Object.entries(mainDocument.labourRate).map(([key, value]) => ({
+//       labourId: key,
+//       ...value,
+//     }));
+
+//     res.status(200).json({ success: true, labourRates });
+//   } catch (error) {
+//     console.error("Error fetching labour rates:", error.message);
+//     res.status(500).json({ success: false, message: "Failed to fetch labour rates", error: error.message });
+//   }
+// };
+
+
+// exports.addLabourRate = async (req, res) => {
+//   try {
+//     const { labourRate, labourType } = req.body;
+
+//     if (!labourRate || !labourType) {
+//       return res.status(400).json({ success: false, message: "Labour rate and type are required" });
+//     }
+
+//     const amsCollection = mongoose.connection.collection('ams');
+//     const mainDocument = await amsCollection.findOne({ _id: AMS_ID });
+
+//     if (!mainDocument) {
+//       return res.status(404).json({ success: false, message: "Main document not found" });
+//     }
+
+//     const lastLabourId = Object.keys(mainDocument.labourRate || {}).pop();
+//     const nextLabourId = `LR${String(parseInt(lastLabourId?.substring(2) || 0) + 1).padStart(2, '0')}`;
+
+//     await amsCollection.updateOne(
+//       { _id: AMS_ID },
+//       {
+//         $set: {
+//           [`labourRate.${nextLabourId}`]: { labourRate: parseFloat(labourRate), labourType },
+//         },
+//       }
+//     );
+
+//     res.status(201).json({ success: true, message: "Labour rate added successfully" });
+//   } catch (error) {
+//     console.error("Error adding labour rate:", error.message);
+//     res.status(500).json({ success: false, message: "Failed to add labour rate", error: error.message });
+//   }
+// };
+
+// exports.getNextLabourId = async (req, res) => {
+//   try {
+//     const amsCollection = mongoose.connection.collection('ams');
+//     const mainDocument = await amsCollection.findOne({ _id: AMS_ID });
+
+//     if (!mainDocument) {
+//       return res.status(404).json({ success: false, message: "Main document not found" });
+//     }
+
+//     const lastLabourId = Object.keys(mainDocument.labourRate || {}).pop();
+//     const nextLabourId = `LR${String(parseInt(lastLabourId?.substring(2) || 0) + 1).padStart(2, '0')}`;
+
+//     res.status(200).json({ success: true, nextLabourId });
+//   } catch (error) {
+//     console.error("Error fetching next labour ID:", error.message);
+//     res.status(500).json({ success: false, message: "Failed to fetch next labour ID", error: error.message });
+//   }
+// };
+// const XLSX = require('xlsx');
+
+// // Export labour rates to Excel
+// exports.exportLabourRates = async (req, res) => {
+//   try {
+//     const amsCollection = mongoose.connection.collection('ams');
+//     const mainDocument = await amsCollection.findOne({ _id: AMS_ID });
+
+//     if (!mainDocument || !mainDocument.labourRate) {
+//       return res.status(404).json({ success: false, message: "No labour rates found to export" });
+//     }
+
+//     const labourRates = Object.entries(mainDocument.labourRate).map(([key, value]) => ({
+//       LabourID: key,
+//       LabourType: value.labourType,
+//       LabourRate: value.labourRate,
+//     }));
+
+//     // Create a new workbook and worksheet
+//     const workbook = XLSX.utils.book_new();
+//     const worksheet = XLSX.utils.json_to_sheet(labourRates);
+
+//     // Append the worksheet to the workbook
+//     XLSX.utils.book_append_sheet(workbook, worksheet, "LabourRates");
+
+//     // Write the workbook to a buffer
+//     const excelBuffer = XLSX.write(workbook, { type: "buffer", bookType: "xlsx" });
+
+//     // Set headers for the response to download the file
+//     res.setHeader("Content-Disposition", "attachment; filename=LabourRates.xlsx");
+//     res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+//     res.send(excelBuffer);
+//   } catch (error) {
+//     console.error("Error exporting labour rates:", error.message);
+//     res.status(500).json({ success: false, message: "Failed to export labour rates", error: error.message });
+//   }
+// };
+// exports.updateLabourRate = async (req, res) => {
+//   try {
+//     const { labourRate } = req.body;
+//     const { labourId } = req.params;
+
+//     if (!labourRate || isNaN(labourRate)) {
+//       return res.status(400).json({ success: false, message: "Valid labour rate is required" });
+//     }
+
+//     const amsCollection = mongoose.connection.collection('ams');
+//     const mainDocument = await amsCollection.findOne({ _id: AMS_ID });
+
+//     if (!mainDocument || !mainDocument.labourRate || !mainDocument.labourRate[labourId]) {
+//       return res.status(404).json({ success: false, message: "Labour entry not found" });
+//     }
+
+//     // Update the labour rate in the database
+//     await amsCollection.updateOne(
+//       { _id: AMS_ID },
+//       { $set: { [`labourRate.${labourId}.labourRate`]: parseFloat(labourRate) } }
+//     );
+
+//     res.status(200).json({ success: true, message: "Labour rate updated successfully" });
+//   } catch (error) {
+//     console.error("Error updating labour rate:", error.message);
+//     res.status(500).json({ success: false, message: "Failed to update labour rate", error: error.message });
+//   }
+// };
+
+
+const mongoose = require('mongoose');
+
+const AMS_ID = new mongoose.Types.ObjectId(process.env._id);
+
+exports.getLabourRates = async (req, res) => {
   try {
-    const amsDocument = await Ams.findOne();
-    const labours = amsDocument ? amsDocument.labourRate : {};
-    res.status(200).json({ labourRate: labours });
-  } catch (err) {
-    console.error('Failed to fetch labour rates:', err);
-    res.status(500).json({ message: 'Failed to fetch labour rates', error: err.message });
-  }
-};
+    const amsCollection = mongoose.connection.collection('ams'); // Access `ams` collection
+    const mainDocument = await amsCollection.findOne({ _id: AMS_ID });
 
-// Get next available labour ID
-exports.getNextLabourId = async (req, res) => {
-  try {
-    const amsDocument = await Ams.findOne();
-    const lastId = amsDocument && amsDocument.labourRate
-      ? Array.from(amsDocument.labourRate.keys()).pop()
-      : 'LR00';
-    const nextIdNum = parseInt(lastId.replace('LR', '')) + 1;
-    const nextId = `LR${nextIdNum.toString().padStart(2, '0')}`;
-    res.status(200).json({ nextLabourId: nextId });
-  } catch (err) {
-    console.error('Failed to fetch next labour ID:', err);
-    res.status(500).json({ message: 'Failed to fetch next labour ID', error: err.message });
-  }
-};
-
-// Add a new labour rate
-exports.addLabour = async (req, res) => {
-  const { labourType, labourRate } = req.body;
-
-  try {
-    let amsDocument = await Ams.findOne();
-    if (!amsDocument) {
-      amsDocument = new Ams({ labourRate: {} });
+    if (!mainDocument || !mainDocument.labourRate) {
+      return res.status(404).json({ success: false, message: "Labour rates not found" });
     }
 
-    const lastId = amsDocument.labourRate ? Array.from(amsDocument.labourRate.keys()).pop() : 'LR00';
-    const nextIdNum = parseInt(lastId.replace('LR', '')) + 1;
-    const nextId = `LR${nextIdNum.toString().padStart(2, '0')}`;
-
-    const newLabour = {
-      labourId: nextId,
-      labourType,
-      labourRate: labourRate.toString() // Store as string to match existing structure
-    };
-
-    amsDocument.labourRate.set(nextId, newLabour);
-    await amsDocument.save();
-
-    res.status(201).json({ message: 'Labour rate added successfully', newLabour });
-  } catch (err) {
-    console.error('Failed to add labour rate:', err);
-    res.status(500).json({ message: 'Failed to add labour rate', error: err.message });
-  }
-};
-
-// Update an existing labour rate by ID
-// controllers/labourController.js
-
-exports.updateLabour = async (req, res) => {
-  const { id } = req.params; // e.g., LR01
-  const { labourRate } = req.body;
-
-  console.log("Update request received for ID:", id);
-  console.log("Received labour rate for update:", labourRate);
-
-  try {
-    // Find the Ams document in the database
-    const amsDocument = await Ams.findOne();
-
-    if (!amsDocument) {
-      console.log("No document found in the Ams collection.");
-      return res.status(404).json({ message: 'No document found' });
-    }
-
-    // Check if the specified labourId entry exists in labourRate
-    const existingEntry = amsDocument.labourRate.get(id);
-    if (existingEntry) {
-      // Update only the labourRate and retain labourType
-      amsDocument.labourRate.set(id, {
-        labourId: id,// Set labourId explicitly to satisfy validation
-        labourType: existingEntry.labourType,
-        labourRate: labourRate.toString() // Store as a string to match DB structure
-      });
-
-      await amsDocument.save();
-      console.log(`Labour rate for ${id} updated successfully`);
-      res.status(200).json({ message: 'Labour rate updated successfully' });
-    } else {
-      console.log(`Labour rate with ID ${id} not found`);
-      res.status(404).json({ message: 'Labour rate not found' });
-    }
-  } catch (err) {
-    console.error('Failed to update labour rate:', err);
-    res.status(500).json({ message: 'Failed to update labour rate', error: err.message });
-  }
-};
-
-// Export labour rates to Excel
-exports.exportLabours = async (req, res) => {
-  try {
-    const amsDocument = await Ams.findOne();
-    const labours = amsDocument?.labourRate ? Array.from(amsDocument.labourRate.values()) : [];
-
-    const data = labours.map(labour => ({
-      ID: labour.labourId,
-      LabourType: labour.labourType,
-      LabourRate: labour.labourRate
+    const labourRates = Object.entries(mainDocument.labourRate).map(([key, value]) => ({
+      labourId: key,
+      ...value,
     }));
 
-    const XLSX = require('xlsx');
-    const ws = XLSX.utils.json_to_sheet(data);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'labourRate');
-
-    res.setHeader('Content-Disposition', 'attachment; filename="labourRate.xlsx"');
-    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    const buffer = XLSX.write(wb, { bookType: 'xlsx', type: 'buffer' });
-    res.send(buffer);
+    res.status(200).json({ success: true, labourRates });
   } catch (error) {
-    console.error("Error exporting data:", error);
-    res.status(500).json({ message: 'Failed to export data' });
+    console.error("Error fetching labour rates:", error.message);
+    res.status(500).json({ success: false, message: "Failed to fetch labour rates", error: error.message });
+  }
+};
+
+
+exports.addLabourRate = async (req, res) => {
+  try {
+    const { labourRate, labourType } = req.body;
+
+    if (!labourRate || !labourType) {
+      return res.status(400).json({ success: false, message: "Labour rate and type are required" });
+    }
+
+    const amsCollection = mongoose.connection.collection('ams');
+    const mainDocument = await amsCollection.findOne({ _id: AMS_ID });
+
+    if (!mainDocument) {
+      return res.status(404).json({ success: false, message: "Main document not found" });
+    }
+
+    const lastLabourId = Object.keys(mainDocument.labourRate || {}).pop();
+    const nextLabourId = `LR${String(parseInt(lastLabourId?.substring(2) || 0) + 1).padStart(2, '0')}`;
+
+    await amsCollection.updateOne(
+      { _id: AMS_ID },
+      {
+        $set: {
+          [`labourRate.${nextLabourId}`]: { labourRate: parseFloat(labourRate), labourType },
+        },
+      }
+    );
+
+    res.status(201).json({ success: true, message: "Labour rate added successfully" });
+  } catch (error) {
+    console.error("Error adding labour rate:", error.message);
+    res.status(500).json({ success: false, message: "Failed to add labour rate", error: error.message });
+  }
+};
+
+exports.deleteLabourRate = async (req, res) => {
+  try {
+    const { labourId } = req.params;
+
+    const amsCollection = mongoose.connection.collection('ams');
+    const mainDocument = await amsCollection.findOne({ _id: AMS_ID });
+
+    if (!mainDocument || !mainDocument.labourRate || !mainDocument.labourRate[labourId]) {
+      return res.status(404).json({ success: false, message: "Labour entry not found" });
+    }
+
+    // Delete the labour rate from the database
+    await amsCollection.updateOne(
+      { _id: AMS_ID },
+      { $unset: { [`labourRate.${labourId}`]: "" } }
+    );
+
+    res.status(200).json({ success: true, message: "Labour rate deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting labour rate:", error.message);
+    res.status(500).json({ success: false, message: "Failed to delete labour rate", error: error.message });
+  }
+};
+
+
+exports.getNextLabourId = async (req, res) => {
+  try {
+    const amsCollection = mongoose.connection.collection('ams');
+    const mainDocument = await amsCollection.findOne({ _id: AMS_ID });
+
+    if (!mainDocument) {
+      return res.status(404).json({ success: false, message: "Main document not found" });
+    }
+
+    const lastLabourId = Object.keys(mainDocument.labourRate || {}).pop();
+    const nextLabourId = `LR${String(parseInt(lastLabourId?.substring(2) || 0) + 1).padStart(2, '0')}`;
+
+    res.status(200).json({ success: true, nextLabourId });
+  } catch (error) {
+    console.error("Error fetching next labour ID:", error.message);
+    res.status(500).json({ success: false, message: "Failed to fetch next labour ID", error: error.message });
+  }
+};
+const XLSX = require('xlsx');
+
+// Export labour rates to Excel
+exports.exportLabourRates = async (req, res) => {
+  try {
+    const amsCollection = mongoose.connection.collection('ams');
+    const mainDocument = await amsCollection.findOne({ _id: AMS_ID });
+
+    if (!mainDocument || !mainDocument.labourRate) {
+      return res.status(404).json({ success: false, message: "No labour rates found to export" });
+    }
+
+    const labourRates = Object.entries(mainDocument.labourRate).map(([key, value]) => ({
+      LabourID: key,
+      LabourType: value.labourType,
+      LabourRate: value.labourRate,
+    }));
+
+    // Create a new workbook and worksheet
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(labourRates);
+
+    // Append the worksheet to the workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet, "LabourRates");
+
+    // Write the workbook to a buffer
+    const excelBuffer = XLSX.write(workbook, { type: "buffer", bookType: "xlsx" });
+
+    // Set headers for the response to download the file
+    res.setHeader("Content-Disposition", "attachment; filename=LabourRates.xlsx");
+    res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    res.send(excelBuffer);
+  } catch (error) {
+    console.error("Error exporting labour rates:", error.message);
+    res.status(500).json({ success: false, message: "Failed to export labour rates", error: error.message });
+  }
+};
+exports.updateLabourRate = async (req, res) => {
+  try {
+    const { labourRate } = req.body;
+    const { labourId } = req.params;
+
+    if (!labourRate || isNaN(labourRate)) {
+      return res.status(400).json({ success: false, message: "Valid labour rate is required" });
+    }
+
+    const amsCollection = mongoose.connection.collection('ams');
+    const mainDocument = await amsCollection.findOne({ _id: AMS_ID });
+
+    if (!mainDocument || !mainDocument.labourRate || !mainDocument.labourRate[labourId]) {
+      return res.status(404).json({ success: false, message: "Labour entry not found" });
+    }
+
+    // Update the labour rate in the database
+    await amsCollection.updateOne(
+      { _id: AMS_ID },
+      { $set: { [`labourRate.${labourId}.labourRate`]: parseFloat(labourRate) } }
+    );
+
+    res.status(200).json({ success: true, message: "Labour rate updated successfully" });
+  } catch (error) {
+    console.error("Error updating labour rate:", error.message);
+    res.status(500).json({ success: false, message: "Failed to update labour rate", error: error.message });
   }
 };

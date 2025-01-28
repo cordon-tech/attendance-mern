@@ -1,3 +1,6 @@
+
+
+// module.exports = Ams;
 // supervisorMasterModel.js
 const mongoose = require('mongoose');
 
@@ -15,11 +18,16 @@ const supervisorSchema = new mongoose.Schema({
     state: { type: String, required: true },
     zipCode: { type: String, required: true }
   },
-  aadharDetails: {
+  // aadharDetails: {
+  //   aadharNumber: { type: String, required: true },
+  //   aadharFrontUpload: { type: String },
+  //   aadharBackUpload: { type: String }
+  // },
+ 
     aadharNumber: { type: String, required: true },
     aadharFrontUpload: { type: String },
-    aadharBackUpload: { type: String }
-  },
+    aadharBackUpload: { type: String },
+  
   password: { type: String, required: true }
 });
 

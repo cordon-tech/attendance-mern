@@ -1,10 +1,12 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const contractorMasterController = require('../controllers/contractorMasterController');
+const contractorMasterController = require("../controllers/contractorMasterController");
 
-// Define routes for contractor master
-router.get('/', contractorMasterController.getAllContractors);
-router.put('/:id', contractorMasterController.updateContractor);
-router.delete('/:id', contractorMasterController.deleteContractor);
+router.get("/", contractorMasterController.getContractors);
+router.put("/:contractorId", contractorMasterController.updateContractor);
+router.delete("/:contractorId", contractorMasterController.deleteContractor);
 
 module.exports = router;
+
+
+

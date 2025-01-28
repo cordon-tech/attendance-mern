@@ -1,92 +1,395 @@
-const Ams = require('../models/contractorModel');
+// const mongoose = require('mongoose');
+// const Ams = require('../models/contractorModel');
+// const dotenv = require('dotenv');
 
+// dotenv.config();
+// const AMS_ID = new mongoose.Types.ObjectId(process.env._id); // Fetch AMS_ID from environment variables
+
+// // Controller to handle contractor registration
+// const registerContractor = async (req, res) => {
+//     try {
+//         const formData = req.body;
+
+//         // Fetch the AMS document
+//         const amsCollection = mongoose.connection.collection('ams');
+//         const mainDocument = await amsCollection.findOne({ _id: AMS_ID });
+
+//         if (!mainDocument) {
+//             return res.status(404).json({ error: 'Main document not found' });
+//         }
+
+//         // Generate a new ID for the contractor
+//         const contractorMaster = mainDocument.contractorMaster || {};
+//         const lastId = Math.max(...Object.keys(contractorMaster).map(Number), 30000); // Start from 30000
+//         const newId = lastId + 1;
+
+//         // Add contractorID to the form data
+//         formData.contractorID = newId;
+
+//         // Add new contractor data
+//         contractorMaster[newId] = formData;
+
+//         // Update the document in the database
+//         await amsCollection.updateOne(
+//             { _id: AMS_ID },
+//             { $set: { contractorMaster } }
+//         );
+
+//         res.status(201).json({ message: 'Contractor registered successfully', contractorID: newId });
+//     } catch (error) {
+//         console.error('Error in registerContractor:', error);
+//         res.status(500).json({ error: 'Failed to register contractor', details: error.message });
+//     }
+// };
+
+// // Export the controller
+// module.exports = {
+//     registerContractor,
+// };
+
+//working for the storing document
+// const mongoose = require('mongoose');
+// const Ams = require('../models/contractorModel');
+// const dotenv = require('dotenv');
+
+// dotenv.config();
+// const AMS_ID = new mongoose.Types.ObjectId(process.env._id);
+
+// const registerContractor = async (req, res) => {
+//     try {
+//         const formData = req.body;
+
+//         const amsCollection = mongoose.connection.collection('ams');
+//         const mainDocument = await amsCollection.findOne({ _id: AMS_ID });
+
+//         if (!mainDocument) {
+//             return res.status(404).json({ error: 'Main document not found' });
+//         }
+
+//         const contractorMaster = mainDocument.contractorMaster || {};
+//         const lastId = Math.max(...Object.keys(contractorMaster).map(Number), 30000);
+//         const newId = lastId + 1;
+
+//         formData.contractorID = newId;
+
+//         contractorMaster[newId] = formData;
+
+//         await amsCollection.updateOne(
+//             { _id: AMS_ID },
+//             { $set: { contractorMaster } }
+//         );
+
+//         res.status(201).json({ message: 'Contractor registered successfully', contractorID: newId });
+//     } catch (error) {
+//         console.error('Error in registerContractor:', error);
+//         res.status(500).json({ error: 'Failed to register contractor', details: error.message });
+//     }
+// };
+
+// module.exports = { registerContractor };
+
+
+//sakshi code
+// const mongoose = require("mongoose");
+// const Ams = require("../models/contractorModel");
+// const { storage } = require('../config/firebaseConfiguration'); // Firebase Storage
+// const { getStorage, ref, uploadBytesResumable, getDownloadURL } = require("firebase/storage");
+
+// const path = require("path");
+// const fs = require("fs");
+// const multer = require("multer");
+// const { v4: uuidv4 } = require("uuid");
+
+// // Set up multer to handle file uploads temporarily on the server
+// const upload = multer({
+//   storage: multer.diskStorage({
+//     destination: (req, file, cb) => {
+//       cb(null, "uploads/"); // Temporary folder for storing files before sending to Firebase
+//     },
+//     filename: (req, file, cb) => {
+//       cb(null, uuidv4() + path.extname(file.originalname)); // Generate unique filenames for the uploaded files
+//     },
+//   }),
+// });
+
+// // Controller to handle contractor registration
+// const registerContractor = async (req, res) => {
+//   try {
+//     // Check if files are present
+//     if (!req.files || Object.keys(req.files).length === 0) {
+//       return res.status(400).json({ error: "No files uploaded" });
+//     }
+
+//     const formData = req.body;
+//     console.log("Received form data:", formData); // Debugging
+
+//     // Handle file uploads to Firebase Storage
+//     const filePromises = Object.keys(req.files || {}).map(async (key) => {
+//       const file = req.files[key][0]; // Assume single file upload per field
+//       if (file) {
+//         const filePath = file.path; // Local path of the uploaded file
+        
+//         // Store the image under the contractor ID in Firebase Storage, using the field name for the file name
+//         const storageRef = ref(storage, `contractors/${formData.contractorID}/${key}${path.extname(file.originalname)}`);
+        
+//         // Read the file content
+//         const fileBuffer = fs.readFileSync(filePath);
+
+//         // Upload the file to Firebase Storage
+//         const snapshot = await uploadBytesResumable(storageRef, fileBuffer, { contentType: file.mimetype });
+        
+//         // Get the download URL for the uploaded file
+//         const fileUrl = await getDownloadURL(snapshot.ref);
+
+//         // Remove the temporary file from server after upload
+//         fs.unlinkSync(filePath);
+
+//         // Add the image URL to the form data under the same field name
+//         formData[key] = fileUrl;
+//       }
+//     });
+
+//     // Wait for all file uploads to finish
+//     await Promise.all(filePromises);
+
+//     // Fetch the AMS document
+//     const amsCollection = mongoose.connection.collection("ams");
+//     const mainDocument = await amsCollection.findOne({ _id: new mongoose.Types.ObjectId(process.env._id) });
+
+//     if (!mainDocument) {
+//       return res.status(404).json({ error: "Main document not found" });
+//     }
+
+//     // Generate a new ID for the contractor
+//     const contractorMaster = mainDocument.contractorMaster || {};
+//     const lastId = Math.max(...Object.keys(contractorMaster).map(Number), 30000); // Start from 30000
+//     const newId = lastId + 1;
+
+//     // Add contractorID to the form data
+//     formData.contractorID = newId;
+
+//     // Add new contractor data to contractorMaster
+//     contractorMaster[newId] = formData;
+
+//     // Update the document in the database
+//     await amsCollection.updateOne(
+//       { _id: new mongoose.Types.ObjectId(process.env._id) },
+//       { $set: { contractorMaster } }
+//     );
+
+//     // Send success response
+//     res.status(201).json({ message: "Contractor registered successfully", contractorID: newId });
+//   } catch (error) {
+//     console.error("Error in registerContractor:", error);
+//     res.status(500).json({ error: "Failed to register contractor", details: error.message });
+//   }
+// };
+
+// module.exports = { registerContractor, upload };
+
+
+//working by sakshi
+// const mongoose = require("mongoose");
+// const Ams = require("../models/contractorModel");
+// const { storage } = require('../config/firebaseConfiguration'); // Firebase Storage
+// const { getStorage, ref, uploadBytesResumable, getDownloadURL } = require("firebase/storage");
+
+// const path = require("path");
+// const fs = require("fs");
+// const multer = require("multer");
+// const { v4: uuidv4 } = require("uuid");
+
+// // Set up multer to handle file uploads temporarily on the server
+// const upload = multer({
+//   storage: multer.diskStorage({
+//     destination: (req, file, cb) => {
+//       cb(null, "uploads/"); // Temporary folder for storing files before sending to Firebase
+//     },
+//     filename: (req, file, cb) => {
+//       cb(null, uuidv4() + path.extname(file.originalname)); // Generate unique filenames for the uploaded files
+//     },
+//   }),
+// });
+
+// // Controller to handle contractor registration
+// const registerContractor = async (req, res) => {
+//   try {
+//     // Check if files are present
+//     if (!req.files || Object.keys(req.files).length === 0) {
+//       return res.status(400).json({ error: "No files uploaded" });
+//     }
+
+//     const formData = req.body;
+//     console.log("Received form data:", formData); // Debugging
+
+//     // Generate a new ID for the contractor first, before uploading the images
+//     const amsCollection = mongoose.connection.collection("ams");
+//     const mainDocument = await amsCollection.findOne({ _id: new mongoose.Types.ObjectId(process.env._id) });
+
+//     if (!mainDocument) {
+//       return res.status(404).json({ error: "Main document not found" });
+//     }
+
+//     // Generate a new contractor ID
+//     const contractorMaster = mainDocument.contractorMaster || {};
+//     const lastId = Math.max(...Object.keys(contractorMaster).map(Number), 30000); // Start from 30000
+//     const newId = lastId + 1;
+
+//     // Add contractorID to the form data
+//     formData.contractorID = newId;
+
+//     // Add new contractor data to contractorMaster
+//     contractorMaster[newId] = formData;
+
+//     // Update the document in the database
+//     await amsCollection.updateOne(
+//       { _id: new mongoose.Types.ObjectId(process.env._id) },
+//       { $set: { contractorMaster } }
+//     );
+
+//     // Handle file uploads to Firebase Storage
+//     const filePromises = Object.keys(req.files || {}).map(async (key) => {
+//       const file = req.files[key][0]; // Assume single file upload per field
+//       if (file) {
+//         const filePath = file.path;  // Local path of the uploaded file
+        
+//         // Store the image under the contractor's ID in Firebase Storage, using the field name for the file name
+//         const storageRef = ref(storage, `contractors/${newId}/${key}${path.extname(file.originalname)}`);
+        
+//         // Read the file content
+//         const fileBuffer = fs.readFileSync(filePath);
+
+//         // Upload the file to Firebase Storage
+//         const snapshot = await uploadBytesResumable(storageRef, fileBuffer, { contentType: file.mimetype });
+        
+//         // Get the download URL for the uploaded file
+//         const fileUrl = await getDownloadURL(snapshot.ref);
+
+//         // Remove the temporary file from server after upload
+//         fs.unlinkSync(filePath);
+
+//         // Add the image URL to the form data
+//         formData[key] = fileUrl;
+//       }
+//     });
+
+//     // Wait for all file uploads to finish
+//     await Promise.all(filePromises);
+
+//     // Send success response
+//     res.status(201).json({ message: "Contractor registered successfully", contractorID: newId });
+//   } catch (error) {
+//     console.error("Error in registerContractor:", error);
+//     res.status(500).json({ error: "Failed to register contractor", details: error.message });
+//   }
+// };
+
+// module.exports = { registerContractor, upload };
+
+
+const mongoose = require("mongoose");
+const Ams = require("../models/contractorModel");
+const { storage } = require('../config/firebase'); // Firebase Storage
+const { getStorage, ref, uploadBytesResumable, getDownloadURL } = require("firebase/storage");
+
+const path = require("path");
+const fs = require("fs");
+const multer = require("multer");
+const { v4: uuidv4 } = require("uuid");
+
+// Set up multer to handle file uploads temporarily on the server
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, "uploads/"); // Temporary folder for storing files before sending to Firebase
+    },
+    filename: (req, file, cb) => {
+      cb(null, uuidv4() + path.extname(file.originalname)); // Generate unique filenames for the uploaded files
+    },
+  }),
+});
+
+// Controller to handle contractor registration
 const registerContractor = async (req, res) => {
-    try {
-        // Log the incoming data for debugging
-        console.log('Incoming body:', req.body);
-        console.log('Incoming files:', req.files);
-
-        // Create a new contractor object from the request body
-        const newContractor = req.body;
-
-        // Initialize documents field if it doesn't exist
-        newContractor.documents = newContractor.documents || {};
-
-        // Process uploaded files
-        req.files.forEach(file => {
-            if (file.fieldname === 'aadharCardFront') {
-                newContractor.documents.aadharFront = file.path;
-            }
-            if (file.fieldname === 'aadharCardBack') {
-                newContractor.documents.aadharBack = file.path;
-            }
-            if (file.fieldname === 'esicCodeLetter') {
-                newContractor.documents.esicCodeLetter = file.path;
-            }
-            if (file.fieldname === 'ptecPtrcCode') {
-                newContractor.documents.ptecPtrcCode = file.path;
-            }
-            if (file.fieldname === 'mlwfCodeLetter') {
-                newContractor.documents.mlwfCodeLetter = file.path;
-            }
-            if (file.fieldname === 'bocwLicense') {
-                newContractor.documents.bocwLicense = file.path;
-            }
-            if (file.fieldname === 'labourLicense') {
-                newContractor.documents.labourLicense = file.path;
-            }
-            if (file.fieldname === 'wcPolicy') {
-                newContractor.documents.wcPolicy = file.path;
-            }
-            if (file.fieldname === 'shopActLicense') {
-                newContractor.documents.shopActLicense = file.path;
-            }
-            if (file.fieldname === 'providentFundCode') {
-                newContractor.documents.providentFundCode = file.path;
-            }
-        });
-
-        // Find the AMS document or create a new one if not found
-        let amsDoc = await Ams.findOne();
-        if (!amsDoc) {
-            amsDoc = new Ams({
-                contractorMaster: new Map() // Initialize contractorMaster as a Map
-            });
-        } else {
-            // Ensure contractorMaster is a Map if it exists
-            if (!(amsDoc.contractorMaster instanceof Map)) {
-                amsDoc.contractorMaster = new Map();
-            }
-        }
-
-        // Generate contractorId based on the current highest contractorId or start from 30001
-        let lastContractorId = 30000; // Default to 30000 if no contractors exist
-        const contractorIds = Array.from(amsDoc.contractorMaster.keys());
-        if (contractorIds.length > 0) {
-            lastContractorId = Math.max(...contractorIds.map(id => parseInt(id, 10)));
-        }
-
-        // Assign the new contractorId
-        const newContractorId = (lastContractorId + 1).toString(); // Generate the next contractorId
-        newContractor.contractorId = newContractorId;
-
-        // Log the final contractor data to be saved
-        console.log('New Contractor Data:', newContractor);
-
-        // Add the new contractor to the contractorMaster object using contractorId as the key
-        amsDoc.contractorMaster.set(newContractorId, newContractor); // Use .set() for Maps to avoid replacing
-
-        // Save the updated AMS document
-        await amsDoc.save();
-
-        res.status(201).json({
-            message: 'Contractor registered successfully',
-            data: newContractor
-        });
-    } catch (error) {
-        console.error('Error registering contractor:', error);
-        res.status(500).json({ error: error.message || 'Server Error' });
+  try {
+    // Check if files are present
+    if (!req.files || Object.keys(req.files).length === 0) {
+      return res.status(400).json({ error: "No files uploaded" });
     }
+
+    const formData = req.body;
+    console.log("Received form data:", formData); // Debugging
+
+    // Generate a new ID for the contractor first, before uploading the images
+    const amsCollection = mongoose.connection.collection("ams");
+    const mainDocument = await amsCollection.findOne({ _id: new mongoose.Types.ObjectId(process.env._id) });
+
+    if (!mainDocument) {
+      return res.status(404).json({ error: "Main document not found" });
+    }
+
+    // Generate a new contractor ID
+    const contractorMaster = mainDocument.contractorMaster || {};
+    const lastId = Math.max(...Object.keys(contractorMaster).map(Number), 30000); // Start from 30000
+    const newId = lastId + 1;
+
+    // Add contractorID to the form data
+    formData.contractorID = newId;
+
+    // Add new contractor data to contractorMaster
+    contractorMaster[newId] = formData;
+
+    // Update the document in the database with the contractor data
+    await amsCollection.updateOne(
+      { _id: new mongoose.Types.ObjectId(process.env._id) },
+      { $set: { contractorMaster } }
+    );
+
+    // Handle file uploads to Firebase Storage and retrieve download URLs
+    const filePromises = Object.keys(req.files || {}).map(async (key) => {
+      const file = req.files[key][0]; // Assume single file upload per field
+      if (file) {
+        const filePath = file.path;  // Local path of the uploaded file
+        
+        // Store the image under the contractor's ID in Firebase Storage, using the field name for the file name
+        const storageRef = ref(storage, `contractors/${newId}/${key}${path.extname(file.originalname)}`);
+        
+        // Read the file content
+        const fileBuffer = fs.readFileSync(filePath);
+
+        // Upload the file to Firebase Storage
+        const snapshot = await uploadBytesResumable(storageRef, fileBuffer, { contentType: file.mimetype });
+        
+        // Get the download URL for the uploaded file
+        const fileUrl = await getDownloadURL(snapshot.ref);
+
+        // Remove the temporary file from server after upload
+        fs.unlinkSync(filePath);
+
+        // Store the download URL in the form data
+        formData[key] = fileUrl;
+      }
+    });
+
+    // Wait for all file uploads to finish
+    await Promise.all(filePromises);
+
+    // Now that all files have been uploaded and their URLs are in formData, update the contractor record
+    await amsCollection.updateOne(
+      { _id: new mongoose.Types.ObjectId(process.env._id) },
+      { 
+        $set: { 
+          [`contractorMaster.${newId}`]: formData
+        }
+      }
+    );
+
+    // Send success response
+    res.status(201).json({ message: "Contractor registered successfully", contractorID: newId });
+  } catch (error) {
+    console.error("Error in registerContractor:", error);
+    res.status(500).json({ error: "Failed to register contractor", details: error.message });
+  }
 };
 
-module.exports = { registerContractor };
+module.exports = { registerContractor, upload };

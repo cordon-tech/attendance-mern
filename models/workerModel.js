@@ -1,38 +1,3 @@
-// const mongoose = require('mongoose');
-
-// const workerSchema = new mongoose.Schema({
-//   firstName: String,
-//   middleName: String,
-//   lastName: String,
-//   dob: Date,
-//   gender: String,
-//   mobileNo: String,
-//   maritalStatus: String,
-//   permanentAddress: String,
-//   city: String,
-//   district: String,
-//   state: String,
-//   pincode: String,
-//   currentAddress: String,
-//   idType: String,
-//   aadharNo: String,
-//   documentFiles: [String], // URLs or paths of files
-//   contractorName: String,
-//   designationName: String,
-//   labourType: String,
-//   joinDate: Date,
-//   pfNumber: String,
-//   uanNumber: String,
-//   bankName: String,
-//   branch: String,
-//   accountNo: String,
-//   ifscCode: String,
-// }, { collection: 'workerMaster' });
-
-// module.exports = mongoose.model('Worker', workerSchema);
-
-
-/////
 const mongoose = require('mongoose');
 
 const workerSchema = new mongoose.Schema({
@@ -40,44 +5,45 @@ const workerSchema = new mongoose.Schema({
   firstName: String,
   middleName: String,
   lastName: String,
-  dob: Date,
+  dateOfBirth: Date, // Changed from `dob` to `dateOfBirth`
   gender: String,
-  mobileNo: String,
+  phoneNumber: String, // Changed from `mobileNo` to `phoneNumber`
   maritalStatus: String,
   permanentAddress: String,
-  city: String,
-  district: String,
-  state: String,
-  pincode: String,
+  permanentPinCode: String, // Changed from `pincode` to `permanentPinCode`
+  permanentCity: String, // Changed from `city` to `permanentCity`
+  permanentDistrict: String, // Changed from `district` to `permanentDistrict`
+  permanentState: String, // Changed from `state` to `permanentState`
   currentAddress: String,
   idType: String,
-  aadharNo: String,
-  documentFiles: String, // URLs or paths of files as string (assuming single file upload)
-  aadharBack: String,    // Text data for the back of Aadhar card
-  bankPassbook: String,  // Text data for bank passbook
+  aadharNumber: String, // Changed from `aadharNo` to `aadharNumber`
+  aadharFront: String, // Changed from `documentFiles` to `aadharFront`
+  aadharBack: String,
+  bankPhoto: String, // Changed from `bankPassbook` to `bankPhoto`
   contractorName: String,
-  designationName: String,
+  designation: String, // Changed from `designationName` to `designation`
   labourType: String,
-  joinDate: Date,
+  dateOfJoining: Date, // Changed from `joinDate` to `dateOfJoining`
   issueDate: Date,
   validDate: Date,
-  bocwRegistration: String,
+  bocwReg: String, // Changed from `bocwRegistration` to `bocwReg`
   pfNumber: String,
   uanNumber: String,
   esicNumber: String,
   panNumber: String,
   ipNumber: String,
-  policeVerify: String,
+  policeVerification: String, // Changed from `policeVerify` to `policeVerification`
   bankName: String,
-  branch: String,
-  accountNo: String,
+  branchName: String, // Changed from `branch` to `branchName`
+  accountNumber: String, // Changed from `accountNo` to `accountNumber`
   ifscCode: String,
   nominee: String,
-  relation: String,   
-  nomineeNo: String,
+  nomineeContactNumber: String, // Changed from `nomineeNo` to `nomineeContactNumber`
   children: String,
   qualification: String,
   sector: String,
+  qrCode: String, // Added qrCode field
+  capturedPhoto: String,
 }, { collection: 'workerMaster' });
 
 module.exports = mongoose.model('Worker', workerSchema);

@@ -1,69 +1,43 @@
-const Ams = require('../models/ContractorMasterModel');
 
-// Get all contractors
-exports.getAllContractors = async (req, res) => {
+const mongoose = require("mongoose");
+const AMS = mongoose.connection.collection("ams");
+
+exports.getContractors = async (req, res) => {
   try {
-    console.log("Fetching contractors from Ams collection...");
-    
-    const amsDoc = await Ams.findOne();
-    console.log("Fetched Ams document:", amsDoc);
-
-    if (!amsDoc || !amsDoc.contractorMaster) {
-      console.log("No contractorMaster data found in Ams document.");
-      return res.status(404).json({ message: 'No contractors found' });
+    const contractorData = await AMS.findOne({}, { projection: { contractorMaster: 1 } });
+    if (!contractorData || !contractorData.contractorMaster) {
+      return res.status(404).json({ message: "No contractors found." });
     }
-
-    // Convert contractorMaster Map to an array
-    const contractors = Object.keys(amsDoc.contractorMaster).map(contractorId => ({
-      contractorId,
-      ...amsDoc.contractorMaster[contractorId]
-    }));
-
-    console.log("Formatted contractors array:", contractors);
+    const contractors = Object.values(contractorData.contractorMaster);
     res.json(contractors);
   } catch (error) {
-    console.error("Error fetching contractor data:", error);
-    res.status(500).json({ message: 'Error fetching contractor data', error: error.message });
+    console.error("Error fetching contractors:", error);
+    res.status(500).json({ message: "Error fetching contractors" });
   }
 };
 
-// Update contractor
 exports.updateContractor = async (req, res) => {
+  const { contractorId } = req.params;
+  const updates = req.body;
+
   try {
-    const { id } = req.params;
-    const updatedData = req.body;
-
-    const amsDoc = await Ams.findOne();
-    if (!amsDoc || !amsDoc.contractorMaster.has(id)) {
-      return res.status(404).json({ message: 'Contractor not found' });
-    }
-
-    // Update the contractor data in the Map
-    amsDoc.contractorMaster.set(id, updatedData);
-    await amsDoc.save();
-
-    res.json({ message: 'Contractor updated successfully' });
+    const contractorData = await AMS.findOneAndUpdate(
+      { [`contractorMaster.${contractorId}`]: { $exists: true } },
+      { $set: { [`contractorMaster.${contractorId}`]: updates } },
+      { new: true }
+    );
+    res.json(contractorData);
   } catch (error) {
-    res.status(500).json({ message: 'Error updating contractor data' });
+    res.status(500).json({ message: "Failed to update contractor", error });
   }
 };
 
-// Delete contractor
 exports.deleteContractor = async (req, res) => {
+  const { contractorId } = req.params;
   try {
-    const { id } = req.params;
-    
-    const amsDoc = await Ams.findOne();
-    if (!amsDoc || !amsDoc.contractorMaster.has(id)) {
-      return res.status(404).json({ message: 'Contractor not found' });
-    }
-
-    // Delete the contractor from the Map
-    amsDoc.contractorMaster.delete(id);
-    await amsDoc.save();
-
-    res.json({ message: 'Contractor deleted successfully' });
+    const contractorData = await AMS.updateOne({}, { $unset: { [`contractorMaster.${contractorId}`]: "" } });
+    res.json({ message: "Contractor deleted" });
   } catch (error) {
-    res.status(500).json({ message: 'Error deleting contractor data' });
+    res.status(500).json({ message: "Failed to delete contractor", error });
   }
 };

@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Types; // Import ObjectId from mongoose
 
 // Replace this with your specific document's ObjectId
-const amsDocumentId = new ObjectId('671f3ea10cdce3e6714e6941');
+const amsDocumentId = new ObjectId(process.env._id);
 
 // Reference to the 'ams' collection
 const amsCollection = mongoose.connection.collection('ams');

@@ -35,13 +35,30 @@
 
 
 
+// const express = require("express");
+// const { getAllContractors, getWorkerById, getWorkersByContractor } = require("../controllers/workerControllerID");
+
+// const router = express.Router();
+
+// // Route to fetch all contractor names and addresses
+// router.get("/contractors", getAllContractors);
+
+// // Route to fetch worker details by worker ID
+// router.get("/worker/:workerId", getWorkerById);
+
+// // Route to fetch workers by contractor name
+// router.get("/contractor/:contractorName", getWorkersByContractor);
+
+// module.exports = router;
+
+
 const express = require("express");
-const { getAllContractors, getWorkerById, getWorkersByContractor } = require("../controllers/workerControllerID");
+const { getContractorNames, getWorkerById, getWorkersByContractor } = require("../controllers/workerControllerID");
 
 const router = express.Router();
 
 // Route to fetch all contractor names and addresses
-router.get("/contractors", getAllContractors);
+router.get("/contractors", getContractorNames);
 
 // Route to fetch worker details by worker ID
 router.get("/worker/:workerId", getWorkerById);

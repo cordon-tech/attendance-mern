@@ -1,9 +1,3 @@
-
-
-/////final testing
-
-// workerRoutes.js
-
 const express = require('express');
 const router = express.Router();
 const { registerWorker, getContractorNames,getDesignationNames,getLabourTypes  } = require('../controllers/workerController');
@@ -22,4 +16,3 @@ router.get("/designations", getDesignationNames);
 router.get("/labourTypes", getLabourTypes);
 
 module.exports = router;
-

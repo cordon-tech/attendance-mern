@@ -1,56 +1,31 @@
-
 // const mongoose = require('mongoose');
 
 // const labourSchema = new mongoose.Schema({
-//   labourId: {
-//     type: String,
+//   labourRate: {
+//     type: Number,
 //     required: true,
-//     unique: true
 //   },
 //   labourType: {
 //     type: String,
-//     required: true
+//     required: true,
 //   },
-//   labourRate: {
-//     type: Number,
-//     required: true
-//   }
 // });
 
-// const AmsSchema = new mongoose.Schema({
-//   labourRate: {
-//     type: Map,
-//     of: labourSchema,
-//     default: {}
-//   }
-// });
+// const LabourRate = mongoose.model('LabourRate', labourSchema);
 
-// module.exports = mongoose.model('Ams', AmsSchema);
-const mongoose = require('mongoose');
+// module.exports = LabourRate;const mongoose = require('mongoose');
 
 const labourSchema = new mongoose.Schema({
-  labourId: {
-    type: String,
+  labourRate: {
+    type: Number,
     required: true,
-    unique: true
   },
   labourType: {
     type: String,
-    required: true
+    required: true,
   },
-  labourRate: {
-    type: Number,
-    required: true
-  }
 });
 
-const AmsSchema = new mongoose.Schema({
-  labourRate: {
-    type: Map,
-    of: labourSchema,
-    default: {}
-  }
-});
+const LabourRate = mongoose.model('LabourRate', labourSchema);
 
-// Check if the model already exists before defining it
-module.exports = mongoose.models.Ams || mongoose.model('Ams', AmsSchema);
+module.exports = LabourRate;

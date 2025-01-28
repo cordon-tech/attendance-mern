@@ -3,11 +3,15 @@ const router = express.Router();
 const {
   getDesignations,
   addDesignation,
-  updateDesignation
+  updateDesignation,
+  deleteDesignation
+
+  
 } = require('../controllers/designationController');
 
 // Get all designations
 router.get('/', getDesignations);
+router.delete('/:id', deleteDesignation);
 
 // Add a new designation
 router.post('/', addDesignation);

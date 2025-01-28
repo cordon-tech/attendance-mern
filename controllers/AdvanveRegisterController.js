@@ -12,9 +12,9 @@
 //         wagesPayable,
 //         advanceAmount,
 //         advancePurpose,
-//         installmentNumber,
+//         instalmentNumber,
 //         dateOfInstallment,
-//         installmentAmount,
+//         instalmentAmount,
 //         remarks
 //     } = req.body;
 
@@ -37,8 +37,8 @@
 //             advancePurpose,
 //             dateOfAdvance: dateKey,
 //             dateOfInstallment,
-//             installmentAmount,
-//             installmentNumber,
+//             instalmentAmount,
+//             instalmentNumber,
 //             nameOfWorkman,
 //             remarks,
 //             wagesPeriods,
@@ -73,12 +73,12 @@ const saveAdvanceData = async (req, res) => {
         dateOfAdvance,
         nameOfWorkman,
         wagesPeriods,
-        wagesPayable,
+        WagesPayable,
         advanceAmount,
         advancePurpose,
-        installmentNumber,
+        instalmentNumber,
         dateOfInstallment,
-        installmentAmount,
+        instalmentAmount,
         remarks
     } = req.body;
 
@@ -96,13 +96,13 @@ const saveAdvanceData = async (req, res) => {
 
         // Structure for storing advance data under contractorName -> date -> workerId
         const workerData = {
-            wagesPayable,
+          WagesPayable,
             advanceAmount,
             advancePurpose,
             dateOfAdvance: dateKey,
             dateOfInstallment,
-            installmentAmount,
-            installmentNumber,
+            instalmentAmount,
+            instalmentNumber,
             nameOfWorkman,
             remarks,
             wagesPeriods,
@@ -123,4 +123,45 @@ const saveAdvanceData = async (req, res) => {
     }
 };
 
-module.exports = { saveAdvanceData };
+
+// Fetch Worker Details (New Logic)
+const fetchWorkerDetails = async (req, res) => {
+    try {
+      const { WorkerID } = req.params;
+  
+      // Access the database
+      const db = mongoose.connection.db;
+  
+      // Query the workerMaster for the given WorkerID
+      const workerData = await db
+        .collection("ams")
+        .findOne({ [`workerMaster.${WorkerID}`]: { $exists: true } });
+  
+      // If worker not found, return 404
+      if (!workerData) {
+        return res
+          .status(404)
+          .json({ message: "Worker ID not found in workerMaster" });
+      }
+  
+      // Extract worker details
+      const worker = workerData.workerMaster[WorkerID];
+  
+      // Concatenate full name
+      const fullName = [worker.firstName, worker.middleName, worker.lastName]
+        .filter(Boolean) // Filter out null/undefined values
+        .join(" ");
+  
+      // Return the full name and other relevant details
+      res.status(200).json({
+        fullName,
+        contractorName: worker.contractorName,
+        otherDetails: worker,
+      });
+    } catch (error) {
+      console.error("Error fetching worker details:", error);
+      res.status(500).json({ message: "Error fetching worker details", error: error.message });
+    }
+  };
+  
+module.exports = { saveAdvanceData , fetchWorkerDetails};

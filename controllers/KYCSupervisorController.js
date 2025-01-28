@@ -1,5 +1,5 @@
 // server/controllers/supervisorController.js
-const Ams = require('../models/amsModel');
+const Ams = require('../models/supervisorModel');
 
 
 const getSupervisorById = async (req, res) => {

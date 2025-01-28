@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 
 // Define the ObjectId to target your specific document
-const AMS_ID = new mongoose.Types.ObjectId("671f3ea10cdce3e6714e6941");
+const AMS_ID = new mongoose.Types.ObjectId(process.env._id);
 
 // Predefined Paid Leave Dates with messages
 const predefinedPaidLeaves = {
@@ -13,7 +13,7 @@ const predefinedPaidLeaves = {
 // Helper to format the date as 'dd-mm-yyyy'
 const formatDate = (dateString) => {
     const [year, month, day] = dateString.split('-');
-    return `${day}-${month}-${year}`;
+    return `${year}-${month}-${day}`;
 };
 
 // Controller function to create a paid leave entry

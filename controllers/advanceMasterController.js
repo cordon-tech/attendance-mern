@@ -1,4 +1,3 @@
-// backend/controllers/advanceController.js
 const mongoose = require("mongoose");
 const AMS = mongoose.connection.collection("ams"); // Access the 'ams' collection
 // Fetch all unique contractor names and addresses from contractorMaster in the ams collection
@@ -47,16 +46,14 @@ const getAdvancesByContractorAndMonth = async (req, res) => {
                     advances.push({
                         workerId,
                         nameOfWorkman: advanceData.nameOfWorkman,
-                        fatherHusbandName: advanceData.fatherHusbandName,
                         dateOfAdvance: advanceData.dateOfAdvance,
-                        gender: advanceData.gender,
-                        designationOfEmployment: advanceData.designationOfEmployment,
                         wagesPeriods: advanceData.wagesPeriods,
+                        WagesPayable: advanceData.WagesPayable, // Updated field
                         advanceAmount: advanceData.advanceAmount,
                         advancePurpose: advanceData.advancePurpose,
+                        instalmentAmount: advanceData.instalmentAmount, // Updated field
                         instalmentNumber: advanceData.instalmentNumber,
                         dateOfInstalment: advanceData.dateOfInstalment,
-                        dateOfLastInstalment: advanceData.dateOfLastInstalment,
                         remarks: advanceData.remarks,
                     });
                 }
